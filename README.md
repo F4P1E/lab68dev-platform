@@ -9,7 +9,7 @@
 
 ---
 
-## 🚀 Overview
+## Overview
 
 The **Lab68 Development Platform** is a full-stack foundation designed for building, testing, and deploying cutting-edge digital products at scale.  
 It provides a modular, high-performance architecture optimized for **developer experience**, **scalability**, and **continuous deployment**.
@@ -18,7 +18,7 @@ Whether you're creating internal tools, marketing sites, or production-grade web
 
 ---
 
-## 🧠 Core Technologies
+## Core Technologies
 
 | Stack | Description |
 |--------|-------------|
@@ -31,16 +31,16 @@ Whether you're creating internal tools, marketing sites, or production-grade web
 
 ---
 
-## 🌍 Live Deployment
+## Live Deployment
 
 **Production URL:**  
-🔗 [https://vercel.com/duong-phu-dongs-projects/v0-lab68-platform-website](https://vercel.com/duong-phu-dongs-projects/v0-lab68-platform-website)
+(Coming Soon)
 
 Every push to the `main` branch triggers an automatic deployment to Vercel — ensuring the live site always reflects your latest code.
 
 ---
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 
@@ -59,7 +59,7 @@ lab68dev-platform/
 
 ---
 
-## ⚙️ Getting Started
+## Getting Started
 
 ### Prerequisites
 Make sure you have the following installed:
@@ -95,7 +95,7 @@ pnpm start
 
 ---
 
-## 🧩 Features
+## Features
 
 ✅ Modern architecture with Next.js App Router
 ✅ TypeScript-first design for reliability and scalability
@@ -107,7 +107,7 @@ pnpm start
 
 ---
 
-## 🧭 Roadmap
+## Roadmap
 
 ### **Q4 2025**
 
@@ -125,7 +125,7 @@ pnpm start
 
 ---
 
-## 👥 Contributing
+## Contributing
 
 Contributions are welcome and encouraged!
 To get started:
@@ -148,18 +148,18 @@ To get started:
    ```
 5. **Open a Pull Request**
 
-> 💡 Please ensure your code passes all lint and build checks before submitting.
+> Please ensure your code passes all lint and build checks before submitting.
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the **MIT License**.
 See the [LICENSE](./LICENSE) file for details.
 
 ---
 
-## 💬 Contact
+## Contact
 
 For issues, suggestions, or feature requests, open an issue on GitHub:
 👉 [https://github.com/F4P1E/lab68dev-platform/issues](https://github.com/F4P1E/lab68dev-platform/issues)
