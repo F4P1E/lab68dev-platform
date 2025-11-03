@@ -116,7 +116,7 @@ export default function HomePage() {
             <h2 className="text-3xl md:text-5xl font-bold mb-12 text-balance">Featured Projects</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {[
-                { name: "Project Alpha", desc: "Next.js web application with AI integration", status: "Active" },
+                { name: "lab68dev-platform", desc: "Next.js web application with AI integration", status: "Active", github: "https://github.com/lab68dev/lab68dev-platform" },
                 { name: "Project Beta", desc: "Python data processing pipeline", status: "Active" },
                 { name: "Project Gamma", desc: "React component library", status: "In Progress" },
               ].map((project) => (
