@@ -23,7 +23,7 @@ Whether you're creating internal tools, marketing sites, or production-grade web
 
 | Stack | Description |
 |--------|-------------|
-| **Framework** | [Next.js 14+](https://nextjs.org/) with App Router |
+| **Framework** | [Next.js 16](https://nextjs.org/) with App Router & Turbopack |
 | **Language** | TypeScript (primary), CSS Modules |
 | **Package Manager** | pnpm |
 | **Deployment** | Vercel — CI/CD integrated with GitHub |
