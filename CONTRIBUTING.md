@@ -20,7 +20,7 @@ If you are new to the project, skim `README.md` for a high-level tour before div
 
 ### Prerequisites
 
-- Node.js ≥ 18
+- Node.js ≥ 16
 - pnpm ≥ 8 (`corepack enable` is recommended)
 - GitHub account with a fork or branch permissions
 
@@ -118,4 +118,4 @@ Need help? Reach out via GitHub Issues or mention **@F4P1E** on your PR.
 
 ### Thank You
 
-Every contribution—bug report, suggestion, or pull request—helps Lab68 grow. We appreciate your time and input!
+Every contribution—bug report, suggestion, or pull request—helps Lab68dev grow. We appreciate your time and input!
