@@ -1,189 +1,121 @@
 # Contributing to Lab68 Development Platform
 
-Thank you for your interest in contributing to **lab68dev Platform**.  
-This document outlines how to report issues, propose features, and submit contributions effectively.
+Thanks for helping improve the **Lab68 Development Platform**. This guide summarizes how to get set up, follow our workflow, and ship changes that integrate smoothly with the rest of the codebase.
 
 ---
 
-## Table of Contents
+## Project Overview
 
-1. [Project Setup](#project-setup)
-2. [Development Workflow](#development-workflow)
-3. [Coding Standards](#coding-standards)
-4. [Commit Guidelines](#commit-guidelines)
-5. [Pull Request Process](#pull-request-process)
-6. [Reporting Issues](#reporting-issues)
-7. [Community Standards](#community-standards)
-8. [Contact](#contact)
+- **Framework:** Next.js 16 App Router with TypeScript 5
+- **Package manager:** pnpm (workspace aware)
+- **Styling:** Tailwind CSS, component primitives in `components/ui`
+- **Localization:** Deep-merge strategy in `lib/i18n.ts` with English defaults
+- **Tooling:** ESLint, Prettier, markdownlint, and custom scripts in the repo root
+
+If you are new to the project, skim `README.md` for a high-level tour before diving in.
 
 ---
 
-## Project Setup
+## Before You Start
 
-### 1. Fork and Clone
-Fork the repository and clone your fork locally:
+### Prerequisites
+
+- Node.js ≥ 18
+- pnpm ≥ 8 (`corepack enable` is recommended)
+- GitHub account with a fork or branch permissions
+
+### Environment Setup
+
 ```bash
 git clone https://github.com/lab68dev/lab68dev-platform.git
 cd lab68dev-platform
-````
-
-### 2. Install Dependencies
-
-The project uses **pnpm** as its package manager.
-
-```bash
 pnpm install
-```
-
-### 3. Run the Development Server
-
-```bash
 pnpm dev
 ```
 
-Visit [http://localhost:3000](http://localhost:3000) to verify the setup.
-
-### 4. Build for Production
-
-```bash
-pnpm build
-pnpm start
-```
+Visit [http://localhost:3000](http://localhost:3000) to confirm the app boots. Use `pnpm build && pnpm start` to preview a production build locally.
 
 ---
 
 ## Development Workflow
 
-We follow a standard GitHub flow:
+1. **Create a branch** describing your work, for example `feature/ai-tooling` or `fix/sidebar-layout`.
+2. **Implement the change** alongside relevant tests, docs, or localization entries.
+3. **Validate locally** before pushing: run `pnpm lint`, `pnpm build`, and any targeted scripts you touched.
+4. **Commit with Conventional Commits** syntax (`feat:`, `fix:`, `docs:`, etc.).
+5. **Push the branch** and open a Pull Request against `main`, filling out the PR template.
 
-1. Create a new branch for your change:
-
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-2. Make your changes and verify that all tests and builds pass:
-
-   ```bash
-   pnpm lint
-   pnpm build
-   ```
-
-3. Commit and push your changes:
-
-   ```bash
-   git commit -m "feat: add new API route for Gemini integration"
-   git push origin feature/your-feature-name
-   ```
-
-4. Open a Pull Request (PR) from your branch to the `main` branch.
+We prefer small, focused PRs that are easy to review and merge.
 
 ---
 
 ## Coding Standards
 
-Please follow these guidelines to maintain consistency across the project:
+- **Language & Framework:** TypeScript with Next.js App Router patterns (`app/` directory routes, server components where possible).
+- **Styling:** Favor Tailwind CSS utility classes or existing components in `components/`. Keep class lists tidy and co-locate styles with the component.
+- **State & Data:** Reuse helpers in `lib/` (e.g., `lib/team.ts`, `lib/auth.ts`) rather than duplicating logic.
+- **Localization:** When adding UI copy, update `lib/i18n.ts` by extending the locale object and relying on the English default keys. Avoid hard-coded strings in components.
+- **Utilities:** Leverage shared functions in `lib/utils.ts` to maintain consistent behavior.
 
-* **Language:** TypeScript
-* **Framework:** Next.js (App Router)
-* **Styling:** Tailwind CSS and CSS Modules
-* **Formatting:** Prettier
-* **Linting:** ESLint
-
-Before committing, ensure that your changes are formatted and linted:
+Run the formatters before committing:
 
 ```bash
 pnpm prettier --write .
 pnpm lint
 ```
 
-Avoid committing code with lint or type errors. Each PR should build successfully without warnings.
+---
+
+## Testing & Quality
+
+- **Static checks:** `pnpm lint`, `pnpm prettier --check .`
+- **Build verification:** `pnpm build`
+- **Feature-specific scripts:** Review the root scripts (e.g., `fix_*` helpers) if your change impacts localization or documentation automation.
+
+Add or update tests when the change alters behavior or fixes a regression. If automated coverage is not available, document manual verification steps in the PR.
 
 ---
 
 ## Commit Guidelines
 
-We follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
+We use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
-**Commit message format:**
-
-```
-<type>: <short summary>
+```text
+<type>[optional scope]: <short summary>
 ```
 
-**Types:**
-
-| Type     | Description                                           |
-| -------- | ----------------------------------------------------- |
-| feat     | A new feature                                         |
-| fix      | A bug fix                                             |
-| docs     | Documentation updates                                 |
-| style    | Code style or formatting only                         |
-| refactor | Code changes that neither fix a bug nor add a feature |
-| test     | Adding or updating tests                              |
-| chore    | Maintenance tasks or tooling updates                  |
-
-**Examples:**
-
-```
-feat: integrate Gemini API for text generation
-fix: resolve Next.js build error in production
-docs: add setup instructions for contributors
-```
+Common types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`. Keep summaries short and in the imperative mood (e.g., `fix: handle empty project list`).
 
 ---
 
-## Pull Request Process
+## Pull Request Checklist
 
-* Ensure that your branch is up to date with `main`:
-
-  ```bash
-  git pull origin main --rebase
-  ```
-* Write a clear, concise title and description for your PR.
-* Reference related issues if applicable (e.g., “Closes #42”).
-* Provide enough context for reviewers to understand your change.
-* Include documentation updates if your change affects usage or configuration.
-* Wait for CI checks (build/lint) to pass before requesting review.
-
-Large PRs are discouraged — prefer smaller, focused contributions.
+- Branch rebased on the latest `main`
+- Lint, build, and relevant scripts passing locally
+- Screenshots or demos attached for UI changes
+- Translation keys updated when introducing user-facing text
+- Documentation updated (`README.md`, `docs/`, or inline comments) if behavior changes
+- PR description explains the problem, the solution, and testing performed
 
 ---
 
-## Reporting Issues
+## Reporting Issues & Feature Ideas
 
-If you encounter a bug, performance issue, or missing feature, please:
-
-1. Search existing [issues](https://github.com/F4P1E/lab68dev-platform/issues) before opening a new one.
-2. Include clear steps to reproduce the problem.
-3. Describe the expected and actual behavior.
-4. Provide screenshots or logs when applicable.
-5. Use a concise, descriptive title.
-
-Feature suggestions are welcome — please include the problem statement and potential benefits.
+1. Search existing [GitHub issues](https://github.com/F4P1E/lab68dev-platform/issues) to avoid duplicates.
+2. Describe the problem clearly with reproduction steps and expected vs. actual behavior.
+3. Attach logs, stack traces, or screenshots when relevant.
+4. For enhancements, explain the use case and potential impact.
 
 ---
 
-## Community Standards
+## Community Standards & Support
 
-By participating in this project, you agree to uphold our [Code of Conduct](./CODE_OF_CONDUCT.md).
-We are committed to providing a respectful, inclusive, and collaborative environment for all contributors.
+Participation is covered by our [Code of Conduct](./CODE_OF_CONDUCT.md). Be respectful, inclusive, and mindful of fellow contributors.
 
-Unacceptable behavior, including harassment or discrimination, will not be tolerated in any form.
-
----
-
-## Contact
-
-If you have questions about contributing, reach out through:
-
-* GitHub Issues: [https://github.com/F4P1E/lab68dev-platform/issues](https://github.com/F4P1E/lab68dev-platform/issues)
-* GitHub Discussions (if enabled)
-* Maintainer: **@F4P1E**
+Need help? Reach out via GitHub Issues or mention **@F4P1E** on your PR.
 
 ---
 
 ### Thank You
 
-Your contributions help make **Lab68 Development Platform** better for everyone.
-Every bug report, feature request, and pull request strengthens the project and its community.
+Every contribution—bug report, suggestion, or pull request—helps Lab68 grow. We appreciate your time and input!
