@@ -98,13 +98,13 @@ pnpm start
 
 ## Features
 
-- ✅ Modern architecture with Next.js App Router
-- ✅ TypeScript-first design for reliability and scalability
-- ✅ Tailwind CSS integration for rapid UI development
-- ✅ Built-in API routes and modular structure
-- ✅ Continuous deployment to Vercel
-- ✅ Easy environment configuration via `.env` files
-- ✅ Automatic build & lint checks with GitHub Actions
+- Modern architecture with Next.js App Router
+- TypeScript-first design for reliability and scalability
+- Tailwind CSS integration for rapid UI development
+- Built-in API routes and modular structure
+- Continuous deployment to Vercel
+- Easy environment configuration via `.env` files
+- Automatic build & lint checks with GitHub Actions
 
 ---
 
