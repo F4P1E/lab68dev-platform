@@ -1,175 +1,158 @@
-# Lab68dev Platform
+# Lab68 Dev Platform
 
-[![License: MIT](https://img.shields.io/badge/License-APACHE-blue.svg?style=for-the-badge)](./LICENSE)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black.svg)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
 [![Version](https://img.shields.io/github/package-json/v/F4P1E/lab68dev-platform?style=for-the-badge)](https://github.com/F4P1E/lab68dev-platform)
 [![Contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=for-the-badge)](https://github.com/F4P1E/lab68dev-platform/issues)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-donate-yellow.svg?style=for-the-badge&logo=buymeacoffee)](https://www.buymeacoffee.com/lab68dev)
 
-
-> The official monorepo for the **Lab68 Development Platform** — a modern, scalable, and developer-friendly web foundation built with **Next.js**, **TypeScript**, and **Vercel**.
-
----
-
-## Overview
-
-The **Lab68 Development Platform** is a full-stack foundation designed for building, testing, and deploying cutting-edge digital products at scale.  
-It provides a modular, high-performance architecture optimized for **developer experience**, **scalability**, and **continuous deployment**.
-
-Whether you're creating internal tools, marketing sites, or production-grade web apps, Lab68 gives you a stable base to build fast and ship confidently.
+**Lab68 Dev Platform** is a monorepo that powers a collaborative product development workspace. It provides dashboards for planning, documentation, meetings, AI-assisted workflows, and role-aware access controls—built on top of **Next.js App Router**, **TypeScript**, and a modular component system.
 
 ---
 
-## Core Technologies
+## Highlights
 
-| Stack | Description |
-|--------|-------------|
-| **Framework** | [Next.js 16](https://nextjs.org/) with App Router & Turbopack |
-| **Language** | TypeScript (primary), CSS Modules |
-| **Package Manager** | pnpm |
-| **Deployment** | Vercel — CI/CD integrated with GitHub |
-| **Styling** | Tailwind CSS + Custom CSS Modules |
-| **Version Control** | Git + GitHub Actions |
+- **Role-Based Collaboration** – project-level roles (owner, admin, editor, viewer) with granular permission checks and activity logging.
+- **Multilingual UI** – centralized translation registry (`lib/i18n.ts`) covering nine locales with automatic English fallbacks.
+- **Productivity Surface** – dashboards for projects, kanban, meetings, files, wiki, diagrams, community discussions, and AI tools.
+- **Client-Side Auth Utilities** – mock authentication and user preference helpers ready to swap for a real provider.
+- **Theme & Layout Framework** – dark/light theme support, sidebar navigation, reusable UI primitives, and responsive Tailwind styling.
+- **Automation Scripts** – translation restoration and encoding-fix utilities for keeping locale data consistent.
 
 ---
 
-## Live Deployment
+## Tech Stack
 
-**Production URL:**  
-[lab68dev platform](lab68dev-platform-1ds5.vercel.app/)
-
-Every push to the `main` branch triggers an automatic deployment to Vercel — ensuring the live site always reflects your latest code.
+| Layer | Details |
+| --- | --- |
+| Framework | [Next.js 16](https://nextjs.org/) with the App Router |
+| Language | [TypeScript 5](https://www.typescriptlang.org/) |
+| Styling | Tailwind CSS + custom utility components |
+| Package Manager | pnpm |
+| Tooling | ESLint, Prettier, PostCSS |
+| Deployment Ready | Vercel (configuration included in `next.config.mjs`) |
 
 ---
 
-## Project Structure
+## Repository Structure
 
-```
-
+```text
 lab68dev-platform/
-├── app/                # Core Next.js application (routes, pages, layouts)
-├── components/         # Shared UI components
-├── lib/                # Utilities and helper modules
-├── public/             # Static assets (icons, images, etc.)
-├── styles/             # Global and component-level styles
-├── next.config.mjs     # Next.js configuration
-├── package.json        # Dependencies and scripts
-├── pnpm-lock.yaml      # Dependency lockfile
-└── README.md           # Project documentation
-
-````
+├── app/                      # Route groups and feature areas
+│   ├── api/chat/route.ts     # Edge-friendly chat endpoint
+│   ├── dashboard/            # Authenticated workspace experience
+│   ├── login/, signup/       # Auth flows (mocked)
+│   └── layout.tsx            # Root layout with theme provider
+├── components/               # Reusable UI atoms/molecules (sidebar, header, etc.)
+├── lib/                      # Domain logic (auth, RBAC, i18n, team utilities)
+├── public/                   # Static assets
+├── styles/                   # Tailwind extension layer
+├── scripts/                  # Translation repair helpers (see root *.js files)
+├── next.config.mjs           # Next.js configuration
+├── tsconfig.json             # Type checking configuration
+└── package.json              # Workspace scripts
+```
 
 ---
 
 ## Getting Started
 
 ### Prerequisites
-Make sure you have the following installed:
-- **Node.js** ≥ 16
-- **pnpm** ≥ 8
+
+- Node.js ≥ 18
+- pnpm ≥ 8 (`corepack enable` recommended)
 
 ### Installation
+
 ```bash
-# Clone the repository
 git clone https://github.com/lab68dev/lab68dev-platform.git
-
-# Navigate into the directory
 cd lab68dev-platform
-
-# Install dependencies
 pnpm install
-````
+```
 
-### Run the Development Server
+### Development
 
 ```bash
 pnpm dev
 ```
 
-Visit [http://localhost:3000](http://localhost:3000) to view the app locally.
+Visit [http://localhost:3000](http://localhost:3000) while the dev server is running.
 
-### Build for Production
+### Production Build
 
 ```bash
 pnpm build
 pnpm start
 ```
 
----
-
-## Features
-
-- Modern architecture with Next.js App Router
-- TypeScript-first design for reliability and scalability
-- Tailwind CSS integration for rapid UI development
-- Built-in API routes and modular structure
-- Continuous deployment to Vercel
-- Easy environment configuration via `.env` files
-- Automatic build & lint checks with GitHub Actions
+The build step runs Next.js static analysis, type-checking, and route bundling.
 
 ---
 
-## Roadmap
+## Feature Tour
 
-### **Q4 2025**
-
-* [ ] Introduce **authentication system** (NextAuth.js / Clerk)
-* [ ] Add **content management module** (CMS integration)
-* [ ] Create **developer documentation portal**
-* [ ] Improve **API architecture** with middleware support
-
-### **Q1 2026**
-
-* [ ] Launch **multi-tenant app support**
-* [ ] Implement **data analytics dashboard**
-* [ ] Add **testing framework** (Vitest / Playwright)
-* [ ] Expand **CI/CD pipelines** with staging previews
+| Area | Summary |
+| --- | --- |
+| **Dashboard Overview** | Snapshot of active projects, AI assistant, system metrics, and notifications. |
+| **Projects & Kanban** | Create projects, assign collaborators, manage roles, and move cards across kanban columns. |
+| **Team Management** | `lib/team.ts` exposes helpers for permissions, activity logging, and “time ago” formatting. |
+| **Files Library** | Upload, categorize, and filter project files and links with type filters and metadata. |
+| **Meetings & Planning** | Schedule meetings, capture plans/milestones, and log progress. |
+| **Wiki & Community** | Knowledge base articles, category filtering, and community discussion threads. |
+| **AI Tools** | Scaffolding for AI-assisted workflows via the `/dashboard/ai-tools` route. |
+| **Localization** | `getTranslations` deep-merges locale entries with English defaults to prevent missing key errors. |
 
 ---
 
-## Contributing
+## Localization Workflow
 
-Contributions are welcome and encouraged!
-To get started:
+- Base copy lives in the English dictionary inside `lib/i18n.ts`.
+- Additional locales provide override objects; missing keys automatically fall back to English.
+- Translation maintenance scripts (e.g., `restore_translations.js`, `fix_final_issues.js`) exist for bulk fixes and encoding repair.
+- To add a new locale, extend the `Language` union and append a dictionary entry mirroring the existing structure.
 
-1. **Fork** the repository
-2. **Create a new branch**:
+---
 
-   ```bash
-   git checkout -b feature/your-feature
-   ```
-3. **Commit your changes**:
+## Available Scripts
 
-   ```bash
-   git commit -m "Add new feature"
-   ```
-4. **Push** your branch:
+| Command | Description |
+| --- | --- |
+| `pnpm dev` | Start the Next.js development server on port 3000 (auto reload + hot module replacement). |
+| `pnpm build` | Compile the production build, run type checks, and output `.next/`. |
+| `pnpm start` | Serve the production build (requires `pnpm build` first). |
+| `pnpm lint` | Run ESLint across the project (configure in `package.json`). |
 
-   ```bash
-   git push origin feature/your-feature
-   ```
-5. **Open a Pull Request**
+> Some automation scripts live in the repository root and are intended for one-off translation repair tasks. They read/write `lib/i18n.ts`—use with caution and commit the results after validation.
 
-> Please ensure your code passes all lint and build checks before submitting.
+---
+
+## Environment Configuration
+
+Create a `.env.local` file for runtime secrets (API keys, analytics, auth providers, etc.). Next.js automatically loads this file in development. Sensitive values are not committed to the repository.
+
+---
+
+## Contribution Guidelines
+
+1. Fork the repository and create a feature branch (`git checkout -b feature/amazing-idea`).
+2. Keep commits scoped and descriptive.
+3. Run `pnpm build` (or at minimum `pnpm lint`) before pushing.
+4. Open a pull request with context about the change and screenshots when UI elements are involved.
+
+We welcome enhancements to the workspace features, translation coverage, accessibility, and DX tooling.
 
 ---
 
 ## License
 
-This project is licensed under the **Apache License**.
-See the [LICENSE](./LICENSE) file for details.
+This project is licensed under the [Apache License 2.0](./LICENSE).
 
 ---
 
-## Contact
+## Support & Feedback
 
-For issues, suggestions, or feature requests, open an issue on GitHub:
-👉 [https://github.com/lab68dev/lab68dev-platform/issues](https://github.com/lab68dev/lab68dev-platform/issues)
+- GitHub Issues: [lab68dev-platform/issues](https://github.com/lab68dev/lab68dev-platform/issues)
+- Maintainer: [@F4P1E](https://github.com/F4P1E)
 
-Or contact the maintainer directly:
-**@F4P1E** on GitHub
-
----
-
-### Made with ❤️ by the Lab68 Dev Team
-
-> Empowering developers to build better, faster, and smarter.
+Let us know how you are using Lab68 Dev Platform or what you would like to see next!
