@@ -10,6 +10,14 @@ export const metadata: Metadata = {
   title: "lab68dev Platform - Build, Learn, Collaborate",
   description:
     "An open developer platform by lab68dev. Empowering developers to build, learn, and collaborate using cutting-edge technologies.",
+  icons: {
+    icon: [
+      {
+        url: "/images/design-mode/Lab68dev.ico",
+        type: "image/x-icon",
+      },
+    ],
+  },
 }
 
 export default function RootLayout({
