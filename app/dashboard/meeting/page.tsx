@@ -6,9 +6,10 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { getCurrentUser } from "@/lib/auth"
 import { getTranslations, getUserLanguage } from "@/lib/i18n"
-import { Plus, Trash2, CalendarIcon, Clock, X } from "lucide-react"
+import { Plus, Trash2, CalendarIcon, Clock, X, Search, Filter } from "lucide-react"
 
 interface Meeting {
   id: string
@@ -32,6 +33,8 @@ export default function MeetingPage() {
     time: "",
     duration: 30,
   })
+  const [searchQuery, setSearchQuery] = useState("")
+  const [filterTime, setFilterTime] = useState<"all" | "upcoming" | "past">("all")
   const [language, setLanguage] = useState(getUserLanguage())
   const t = getTranslations(language).meeting
 
@@ -98,7 +101,22 @@ export default function MeetingPage() {
     return meetingDateTime < new Date()
   }
 
-  const upcomingMeetings = meetings
+  // Filter meetings based on search and filters
+  const filteredMeetings = meetings.filter((meeting) => {
+    const matchesSearch =
+      meeting.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      meeting.description.toLowerCase().includes(searchQuery.toLowerCase())
+
+    const isPast = isPastMeeting(meeting.date, meeting.time)
+    const matchesTime =
+      filterTime === "all" ||
+      (filterTime === "upcoming" && !isPast) ||
+      (filterTime === "past" && isPast)
+
+    return matchesSearch && matchesTime
+  })
+
+  const upcomingMeetings = filteredMeetings
     .filter((m) => !isPastMeeting(m.date, m.time))
     .sort((a, b) => {
       const dateA = new Date(`${a.date}T${a.time}`)
@@ -106,7 +124,7 @@ export default function MeetingPage() {
       return dateA.getTime() - dateB.getTime()
     })
 
-  const pastMeetings = meetings
+  const pastMeetings = filteredMeetings
     .filter((m) => isPastMeeting(m.date, m.time))
     .sort((a, b) => {
       const dateA = new Date(`${a.date}T${a.time}`)
@@ -127,12 +145,59 @@ export default function MeetingPage() {
         </Button>
       </div>
 
+      {/* Search and Filter Section */}
+      <div className="space-y-4">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search meetings..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <select
+            value={filterTime}
+            onChange={(e) => setFilterTime(e.target.value as "all" | "upcoming" | "past")}
+            className="bg-card border border-border px-4 py-2 text-sm focus:outline-none focus:border-primary"
+            title="Filter by time"
+          >
+            <option value="all">All Meetings</option>
+            <option value="upcoming">{t.upcoming}</option>
+            <option value="past">{t.past}</option>
+          </select>
+        </div>
+        {(searchQuery || filterTime !== "all") && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Filter className="h-4 w-4" />
+            <span>
+              Showing {filteredMeetings.length} of {meetings.length} meetings
+            </span>
+            <button
+              onClick={() => {
+                setSearchQuery("")
+                setFilterTime("all")
+              }}
+              className="text-primary hover:underline"
+            >
+              Clear filters
+            </button>
+          </div>
+        )}
+      </div>
+
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
           <div className="w-full max-w-md border border-border bg-background p-8 space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-bold">{t.scheduleMeeting}</h2>
-              <button onClick={() => setShowForm(false)} className="text-muted-foreground hover:text-foreground">
+              <button
+                onClick={() => setShowForm(false)}
+                className="text-muted-foreground hover:text-foreground"
+                title="Close"
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -166,6 +231,7 @@ export default function MeetingPage() {
                     value={formData.date}
                     onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                     className="w-full bg-card border border-border px-4 py-2 text-sm focus:outline-none focus:border-primary"
+                    title={t.date}
                     required
                   />
                 </div>
@@ -176,6 +242,7 @@ export default function MeetingPage() {
                     value={formData.time}
                     onChange={(e) => setFormData({ ...formData, time: e.target.value })}
                     className="w-full bg-card border border-border px-4 py-2 text-sm focus:outline-none focus:border-primary"
+                    title={t.time}
                     required
                   />
                 </div>
@@ -189,6 +256,7 @@ export default function MeetingPage() {
                   value={formData.duration}
                   onChange={(e) => setFormData({ ...formData, duration: Number.parseInt(e.target.value) })}
                   className="w-full bg-card border border-border px-4 py-2 text-sm focus:outline-none focus:border-primary"
+                  title={t.duration}
                   min="15"
                   step="15"
                   required
@@ -315,7 +383,7 @@ export default function MeetingPage() {
                           className="w-full gap-2 border-destructive text-destructive hover:bg-destructive hover:text-background"
                         >
                           <Trash2 className="h-3 w-3" />
-                          {t.delete}
+                          Delete
                         </Button>
                       </div>
                     </div>

@@ -6,9 +6,10 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { getCurrentUser } from "@/lib/auth"
 import { getTranslations, getUserLanguage } from "@/lib/i18n"
-import { Plus, Trash2, Check, X, CheckCircle2, Circle } from "lucide-react"
+import { Plus, Trash2, Check, X, CheckCircle2, Circle, Search, Filter } from "lucide-react"
 
 interface Task {
   id: string
@@ -29,6 +30,9 @@ export default function TodoPage() {
     description: "",
     priority: "medium" as "low" | "medium" | "high",
   })
+  const [searchQuery, setSearchQuery] = useState("")
+  const [filterPriority, setFilterPriority] = useState<"all" | "low" | "medium" | "high">("all")
+  const [filterStatus, setFilterStatus] = useState<"all" | "completed" | "pending">("all")
   const [language, setLanguage] = useState(getUserLanguage())
   const t = getTranslations(language).todo
 
@@ -115,8 +119,24 @@ export default function TodoPage() {
     }
   }
 
-  const completedTasks = tasks.filter((t) => t.completed)
-  const pendingTasks = tasks.filter((t) => !t.completed)
+  // Filter tasks based on search and filters
+  const filteredTasks = tasks.filter((task) => {
+    const matchesSearch =
+      task.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      task.description.toLowerCase().includes(searchQuery.toLowerCase())
+
+    const matchesPriority = filterPriority === "all" || task.priority === filterPriority
+
+    const matchesStatus =
+      filterStatus === "all" ||
+      (filterStatus === "completed" && task.completed) ||
+      (filterStatus === "pending" && !task.completed)
+
+    return matchesSearch && matchesPriority && matchesStatus
+  })
+
+  const completedTasks = filteredTasks.filter((t) => t.completed)
+  const pendingTasks = filteredTasks.filter((t) => !t.completed)
 
   return (
     <div className="p-8 space-y-8">
@@ -131,12 +151,73 @@ export default function TodoPage() {
         </Button>
       </div>
 
+      {/* Search and Filter Section */}
+      <div className="space-y-4">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search tasks..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <div className="flex gap-2">
+            <select
+              value={filterPriority}
+              onChange={(e) => setFilterPriority(e.target.value as "all" | "low" | "medium" | "high")}
+              className="bg-card border border-border px-4 py-2 text-sm focus:outline-none focus:border-primary"
+              title="Filter by priority"
+            >
+              <option value="all">All Priorities</option>
+              <option value="low">{t.low}</option>
+              <option value="medium">{t.medium}</option>
+              <option value="high">{t.high}</option>
+            </select>
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value as "all" | "completed" | "pending")}
+              className="bg-card border border-border px-4 py-2 text-sm focus:outline-none focus:border-primary"
+              title="Filter by status"
+            >
+              <option value="all">All Status</option>
+              <option value="pending">{t.pending}</option>
+              <option value="completed">{t.completed}</option>
+            </select>
+          </div>
+        </div>
+        {(searchQuery || filterPriority !== "all" || filterStatus !== "all") && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Filter className="h-4 w-4" />
+            <span>
+              Showing {filteredTasks.length} of {tasks.length} tasks
+            </span>
+            <button
+              onClick={() => {
+                setSearchQuery("")
+                setFilterPriority("all")
+                setFilterStatus("all")
+              }}
+              className="text-primary hover:underline"
+            >
+              Clear filters
+            </button>
+          </div>
+        )}
+      </div>
+
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
           <div className="w-full max-w-md border border-border bg-background p-8 space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-bold">{t.addTask}</h2>
-              <button onClick={() => setShowForm(false)} className="text-muted-foreground hover:text-foreground">
+              <button
+                onClick={() => setShowForm(false)}
+                className="text-muted-foreground hover:text-foreground"
+                title="Close"
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -168,6 +249,7 @@ export default function TodoPage() {
                   value={formData.priority}
                   onChange={(e) => setFormData({ ...formData, priority: e.target.value as "low" | "medium" | "high" })}
                   className="w-full bg-card border border-border px-4 py-2 text-sm focus:outline-none focus:border-primary"
+                  title={t.priority}
                 >
                   <option value="low">{t.low}</option>
                   <option value="medium">{t.medium}</option>
@@ -184,7 +266,7 @@ export default function TodoPage() {
                   onClick={() => setShowForm(false)}
                   className="flex-1 border-foreground text-foreground hover:bg-foreground hover:text-background bg-transparent"
                 >
-                  {t.cancel}
+                  Cancel
                 </Button>
               </div>
             </form>

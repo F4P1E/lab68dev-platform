@@ -79,7 +79,12 @@ export function NotificationsPanel() {
         <div className="absolute right-0 top-full mt-2 w-80 bg-card border border-border shadow-lg z-50">
           <div className="flex items-center justify-between p-4 border-b border-border">
             <h3 className="font-bold">{t.notifications?.title || "Notifications"}</h3>
-            <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-secondary">
+            <button 
+              onClick={() => setIsOpen(false)} 
+              className="p-1 hover:bg-secondary"
+              title="Close notifications"
+              aria-label="Close notifications"
+            >
               <X className="h-4 w-4" />
             </button>
           </div>

@@ -57,7 +57,7 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background text-foreground">
       <div className="absolute top-4 right-4">
         <LanguageSwitcher />
       </div>
@@ -68,7 +68,7 @@ export default function SignUpPage() {
           <p className="text-muted-foreground">{t.auth.createAccount}</p>
         </div>
 
-        <div className="border border-border p-8 space-y-6">
+        <div className="border border-border p-8 space-y-6 bg-card">
           <form onSubmit={handleSignUp} className="space-y-4">
             {error && <div className="border border-primary bg-primary/10 p-3 text-sm">{error}</div>}
 

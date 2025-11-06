@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Plus, CheckCircle2, Clock, X, Pencil, Trash2, Users, LayoutGrid } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Plus, CheckCircle2, Clock, X, Pencil, Trash2, Users, LayoutGrid, Search, Filter } from "lucide-react"
 import { getCurrentUser, getAllUsers } from "@/lib/auth"
 import { getTranslations, getUserLanguage, type Language } from "@/lib/i18n"
 import Link from "next/link"
@@ -32,6 +33,8 @@ export default function ProjectsPage() {
     status: "Active",
     tech: "",
   })
+  const [searchQuery, setSearchQuery] = useState("")
+  const [filterStatus, setFilterStatus] = useState<string>("all")
   const [language, setLanguage] = useState<Language>("en")
   const t = getTranslations(language)
 
@@ -228,6 +231,18 @@ export default function ProjectsPage() {
     return `${Math.floor(seconds / 86400)}d ago`
   }
 
+  // Filter projects based on search and filters
+  const filteredProjects = projects.filter((project) => {
+    const matchesSearch =
+      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      project.tech.some((tech) => tech.toLowerCase().includes(searchQuery.toLowerCase()))
+
+    const matchesStatus = filterStatus === "all" || project.status === filterStatus
+
+    return matchesSearch && matchesStatus
+  })
+
   return (
     <div className="p-8 space-y-8">
       {/* Header */}
@@ -242,18 +257,66 @@ export default function ProjectsPage() {
         </Button>
       </div>
 
+      {/* Search and Filter Section */}
+      <div className="space-y-4">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search projects..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="bg-card border border-border px-4 py-2 text-sm focus:outline-none focus:border-primary"
+            title="Filter by status"
+          >
+            <option value="all">All Status</option>
+            <option value="Active">{t.projects.active}</option>
+            <option value="Building">{t.projects.building}</option>
+            <option value="In Progress">{t.projects.inProgress}</option>
+          </select>
+        </div>
+        {(searchQuery || filterStatus !== "all") && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Filter className="h-4 w-4" />
+            <span>
+              Showing {filteredProjects.length} of {projects.length} projects
+            </span>
+            <button
+              onClick={() => {
+                setSearchQuery("")
+                setFilterStatus("all")
+              }}
+              className="text-primary hover:underline"
+            >
+              Clear filters
+            </button>
+          </div>
+        )}
+      </div>
+
       {/* Projects Grid */}
-      {projects.length === 0 ? (
+      {filteredProjects.length === 0 ? (
         <div className="border border-border p-12 text-center space-y-4">
           <Plus className="h-12 w-12 mx-auto text-muted-foreground" />
           <div>
-            <h3 className="text-xl font-bold mb-2">{t.projects.noProjects}</h3>
-            <p className="text-muted-foreground">{t.projects.startCreating}</p>
+            <h3 className="text-xl font-bold mb-2">
+              {searchQuery || filterStatus !== "all" ? "No projects found" : t.projects.noProjects}
+            </h3>
+            <p className="text-muted-foreground">
+              {searchQuery || filterStatus !== "all" ? "Try adjusting your search or filters" : t.projects.startCreating}
+            </p>
           </div>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => {
+          {filteredProjects.map((project) => {
             const currentUser = getCurrentUser()
             const isOwner = project.userId === currentUser?.email
             return (
@@ -347,7 +410,11 @@ export default function ProjectsPage() {
           <div className="w-full max-w-md border border-border bg-background p-8 space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-bold">{editingProject ? t.projects.editProject : t.projects.newProject}</h2>
-              <button onClick={handleCloseModal} className="text-muted-foreground hover:text-foreground">
+              <button
+                onClick={handleCloseModal}
+                className="text-muted-foreground hover:text-foreground"
+                title="Close"
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -378,6 +445,7 @@ export default function ProjectsPage() {
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                   className="w-full bg-card border border-border px-4 py-2 text-sm focus:outline-none focus:border-primary"
+                  title={t.projects.status}
                 >
                   <option value="Active">{t.projects.active}</option>
                   <option value="Building">{t.projects.building}</option>
@@ -417,7 +485,11 @@ export default function ProjectsPage() {
           <div className="w-full max-w-md border border-border bg-background p-8 space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-bold">{t.projects.collaborators}</h2>
-              <button onClick={() => setShowCollabModal(false)} className="text-muted-foreground hover:text-foreground">
+              <button
+                onClick={() => setShowCollabModal(false)}
+                className="text-muted-foreground hover:text-foreground"
+                title="Close"
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>

@@ -137,6 +137,8 @@ export default function SettingsPage() {
                   accept="image/*"
                   onChange={handleAvatarChange}
                   className="hidden"
+                  title="Upload profile picture"
+                  aria-label="Upload profile picture"
                 />
                 <Button
                   onClick={() => fileInputRef.current?.click()}
@@ -241,6 +243,8 @@ export default function SettingsPage() {
                 className={`border p-4 transition-colors ${
                   language === lang ? "border-primary bg-secondary" : "border-border hover:border-primary"
                 }`}
+                title={`Switch to ${getLanguageName(lang)}`}
+                aria-label={`Switch to ${getLanguageName(lang)}`}
               >
                 <p className="font-medium">{getLanguageName(lang)}</p>
               </button>
@@ -266,6 +270,8 @@ export default function SettingsPage() {
               className={`w-12 h-6 border border-border transition-colors ${
                 notifications ? "bg-primary" : "bg-secondary"
               }`}
+              title="Toggle email notifications"
+              aria-label="Toggle email notifications"
             >
               <div
                 className={`w-4 h-4 bg-background transition-transform ${
@@ -279,7 +285,11 @@ export default function SettingsPage() {
               <p className="font-medium">{t.settings.buildNotifications}</p>
               <p className="text-sm text-muted-foreground">{t.settings.buildNotificationsDesc}</p>
             </div>
-            <button className="w-12 h-6 border border-border bg-primary">
+            <button 
+              className="w-12 h-6 border border-border bg-primary"
+              title="Toggle build notifications"
+              aria-label="Toggle build notifications"
+            >
               <div className="w-4 h-4 bg-background translate-x-7" />
             </button>
           </div>
@@ -290,7 +300,11 @@ export default function SettingsPage() {
                 {t.settings.meetingNotificationsDesc || "Get notified about upcoming meetings"}
               </p>
             </div>
-            <button className="w-12 h-6 border border-border bg-primary">
+            <button 
+              className="w-12 h-6 border border-border bg-primary"
+              title="Toggle meeting notifications"
+              aria-label="Toggle meeting notifications"
+            >
               <div className="w-4 h-4 bg-background translate-x-7" />
             </button>
           </div>
@@ -331,6 +345,8 @@ export default function SettingsPage() {
                 className={`border p-4 transition-colors ${
                   currentTheme === "dark" ? "border-primary bg-secondary" : "border-border hover:border-primary"
                 }`}
+                title="Switch to dark theme"
+                aria-label="Switch to dark theme"
               >
                 <p className="font-medium">{t.settings.darkMode}</p>
                 {currentTheme === "dark" && <p className="text-xs text-muted-foreground">{t.settings.currentTheme}</p>}
@@ -340,6 +356,8 @@ export default function SettingsPage() {
                 className={`border p-4 transition-colors ${
                   currentTheme === "light" ? "border-primary bg-secondary" : "border-border hover:border-primary"
                 }`}
+                title="Switch to light theme"
+                aria-label="Switch to light theme"
               >
                 <p className="font-medium">{t.settings.lightMode}</p>
                 {currentTheme === "light" && <p className="text-xs text-muted-foreground">{t.settings.currentTheme}</p>}

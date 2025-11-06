@@ -18,20 +18,26 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={`${jetbrainsMono.className} font-mono antialiased`}>
+    <html lang="en" suppressHydrationWarning>
+      <head>
         <script
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
-                const theme = localStorage.getItem('lab68_theme') || 'dark';
-                if (theme === 'light') {
-                  document.documentElement.classList.add('light');
-                }
+                try {
+                  const theme = localStorage.getItem('lab68_theme') || 'dark';
+                  if (theme === 'light') {
+                    document.documentElement.classList.add('light');
+                  } else {
+                    document.documentElement.classList.remove('light');
+                  }
+                } catch (e) {}
               })();
             `,
           }}
         />
+      </head>
+      <body className={`${jetbrainsMono.className} font-mono antialiased bg-background text-foreground`}>
         {children}
         <Analytics />
       </body>

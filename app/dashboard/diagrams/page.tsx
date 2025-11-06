@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { getCurrentUser } from "@/lib/auth"
-import { Plus, Edit, Trash2 } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Plus, Edit, Trash2, Search, Filter } from "lucide-react"
 import { useLanguage } from "@/lib/i18n"
 import Link from "next/link"
 
@@ -24,6 +25,7 @@ export default function DiagramsPage() {
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [newDiagram, setNewDiagram] = useState({ name: "", description: "" })
   const [user, setUser] = useState<any>(null)
+  const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
     const currentUser = getCurrentUser()
@@ -72,13 +74,22 @@ export default function DiagramsPage() {
     setDiagrams(diagrams.filter((d) => d.id !== id))
   }
 
+  // Filter diagrams based on search
+  const filteredDiagrams = diagrams.filter((diagram) => {
+    const matchesSearch =
+      diagram.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      diagram.description.toLowerCase().includes(searchQuery.toLowerCase())
+
+    return matchesSearch
+  })
+
   return (
     <div className="p-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">{t.diagrams.title}</h1>
           <p className="text-muted-foreground mt-2">
-            {diagrams.length} {diagrams.length === 1 ? "diagram" : "diagrams"}
+            {filteredDiagrams.length} {filteredDiagrams.length === 1 ? "diagram" : "diagrams"}
           </p>
         </div>
         <button
@@ -90,14 +101,44 @@ export default function DiagramsPage() {
         </button>
       </div>
 
-      {diagrams.length === 0 ? (
+      {/* Search Section */}
+      <div className="mb-6 space-y-4">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Search diagrams..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        {searchQuery && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Filter className="h-4 w-4" />
+            <span>
+              Showing {filteredDiagrams.length} of {diagrams.length} diagrams
+            </span>
+            <button onClick={() => setSearchQuery("")} className="text-primary hover:underline">
+              Clear search
+            </button>
+          </div>
+        )}
+      </div>
+
+      {filteredDiagrams.length === 0 ? (
         <div className="border border-border p-12 text-center">
           <div className="mx-auto max-w-md">
-            <h3 className="text-xl font-bold mb-2">{t.diagrams.noDiagrams}</h3>
-            <p className="text-muted-foreground mb-6">{t.diagrams.noDiagramsDesc}</p>
+            <h3 className="text-xl font-bold mb-2">
+              {searchQuery ? "No diagrams found" : t.diagrams.noDiagrams}
+            </h3>
+            <p className="text-muted-foreground mb-6">
+              {searchQuery ? "Try adjusting your search" : t.diagrams.noDiagramsDesc}
+            </p>
             <button
               onClick={() => setShowCreateModal(true)}
               className="bg-primary text-background px-6 py-3 font-medium hover:opacity-90 transition-opacity border border-primary"
+              title={t.diagrams.createNew}
             >
               {t.diagrams.createNew}
             </button>
@@ -105,7 +146,7 @@ export default function DiagramsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {diagrams.map((diagram) => (
+          {filteredDiagrams.map((diagram) => (
             <div key={diagram.id} className="border border-border p-6 hover:border-primary transition-colors">
               <h3 className="text-xl font-bold mb-2">{diagram.name}</h3>
               <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{diagram.description}</p>
@@ -123,6 +164,7 @@ export default function DiagramsPage() {
                 <button
                   onClick={() => handleDeleteDiagram(diagram.id)}
                   className="border border-border px-4 py-2 text-sm font-medium hover:border-red-500 hover:text-red-500 transition-colors"
+                  title={t.diagrams.delete}
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>

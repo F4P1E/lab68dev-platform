@@ -47,7 +47,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background text-foreground">
       <div className="absolute top-4 right-4">
         <LanguageSwitcher />
       </div>
@@ -58,7 +58,7 @@ export default function LoginPage() {
           <p className="text-muted-foreground">{t.landing.hero.subtitle}</p>
         </div>
 
-        <div className="border border-border p-8 space-y-6">
+        <div className="border border-border p-8 space-y-6 bg-card">
           <form onSubmit={handleLogin} className="space-y-4">
             {error && <div className="border border-primary bg-primary/10 p-3 text-sm">{error}</div>}
 
@@ -92,6 +92,8 @@ export default function LoginPage() {
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
                 className="w-4 h-4 border border-border bg-card accent-primary cursor-pointer"
+                title="Remember me"
+                aria-label="Remember me"
               />
               <Label htmlFor="rememberMe" className="cursor-pointer text-sm">
                 {t.auth.rememberMe}

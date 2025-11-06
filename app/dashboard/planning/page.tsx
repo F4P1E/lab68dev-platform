@@ -6,9 +6,10 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { getCurrentUser } from "@/lib/auth"
 import { getTranslations, getUserLanguage } from "@/lib/i18n"
-import { Plus, Trash2, CalendarIcon, X, CheckCircle2, Clock, Circle } from "lucide-react"
+import { Plus, Trash2, CalendarIcon, X, CheckCircle2, Clock, Circle, Search, Filter } from "lucide-react"
 
 interface Milestone {
   id: string
@@ -39,6 +40,8 @@ export default function PlanningPage() {
     endDate: "",
     status: "not-started" as "not-started" | "in-progress" | "completed",
   })
+  const [searchQuery, setSearchQuery] = useState("")
+  const [filterStatus, setFilterStatus] = useState<"all" | "not-started" | "in-progress" | "completed">("all")
   const [language, setLanguage] = useState(getUserLanguage())
   const t = getTranslations(language).planning
 
@@ -140,6 +143,17 @@ export default function PlanningPage() {
     }
   }
 
+  // Filter plans based on search and filters
+  const filteredPlans = plans.filter((plan) => {
+    const matchesSearch =
+      plan.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      plan.description.toLowerCase().includes(searchQuery.toLowerCase())
+
+    const matchesStatus = filterStatus === "all" || plan.status === filterStatus
+
+    return matchesSearch && matchesStatus
+  })
+
   return (
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between border-b border-border pb-8">
@@ -153,12 +167,62 @@ export default function PlanningPage() {
         </Button>
       </div>
 
+      {/* Search and Filter Section */}
+      <div className="space-y-4">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search plans..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <select
+            value={filterStatus}
+            onChange={(e) =>
+              setFilterStatus(e.target.value as "all" | "not-started" | "in-progress" | "completed")
+            }
+            className="bg-card border border-border px-4 py-2 text-sm focus:outline-none focus:border-primary"
+            title="Filter by status"
+          >
+            <option value="all">All Status</option>
+            <option value="not-started">{t.notStarted}</option>
+            <option value="in-progress">{t.inProgress}</option>
+            <option value="completed">{t.completed}</option>
+          </select>
+        </div>
+        {(searchQuery || filterStatus !== "all") && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Filter className="h-4 w-4" />
+            <span>
+              Showing {filteredPlans.length} of {plans.length} plans
+            </span>
+            <button
+              onClick={() => {
+                setSearchQuery("")
+                setFilterStatus("all")
+              }}
+              className="text-primary hover:underline"
+            >
+              Clear filters
+            </button>
+          </div>
+        )}
+      </div>
+
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
           <div className="w-full max-w-md border border-border bg-background p-8 space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-bold">{t.createPlan}</h2>
-              <button onClick={() => setShowForm(false)} className="text-muted-foreground hover:text-foreground">
+              <button
+                onClick={() => setShowForm(false)}
+                className="text-muted-foreground hover:text-foreground"
+                title="Close"
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -192,6 +256,7 @@ export default function PlanningPage() {
                     value={formData.startDate}
                     onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                     className="w-full bg-card border border-border px-4 py-2 text-sm focus:outline-none focus:border-primary"
+                    title={t.startDate}
                     required
                   />
                 </div>
@@ -202,6 +267,7 @@ export default function PlanningPage() {
                     value={formData.endDate}
                     onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                     className="w-full bg-card border border-border px-4 py-2 text-sm focus:outline-none focus:border-primary"
+                    title={t.endDate}
                     required
                   />
                 </div>
@@ -214,6 +280,7 @@ export default function PlanningPage() {
                     setFormData({ ...formData, status: e.target.value as "not-started" | "in-progress" | "completed" })
                   }
                   className="w-full bg-card border border-border px-4 py-2 text-sm focus:outline-none focus:border-primary"
+                  title={t.status}
                 >
                   <option value="not-started">{t.notStarted}</option>
                   <option value="in-progress">{t.inProgress}</option>
@@ -230,7 +297,7 @@ export default function PlanningPage() {
                   onClick={() => setShowForm(false)}
                   className="flex-1 border-foreground text-foreground hover:bg-foreground hover:text-background bg-transparent"
                 >
-                  {t.cancel}
+                  Cancel
                 </Button>
               </div>
             </form>
@@ -238,17 +305,21 @@ export default function PlanningPage() {
         </div>
       )}
 
-      {plans.length === 0 ? (
+      {filteredPlans.length === 0 ? (
         <div className="border border-border p-12 text-center space-y-4">
           <Plus className="h-12 w-12 mx-auto text-muted-foreground" />
           <div>
-            <h3 className="text-xl font-bold mb-2">{t.noPlans}</h3>
-            <p className="text-muted-foreground">{t.startPlanning}</p>
+            <h3 className="text-xl font-bold mb-2">
+              {searchQuery || filterStatus !== "all" ? "No plans found" : t.noPlans}
+            </h3>
+            <p className="text-muted-foreground">
+              {searchQuery || filterStatus !== "all" ? "Try adjusting your search or filters" : t.startPlanning}
+            </p>
           </div>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {plans.map((plan) => {
+          {filteredPlans.map((plan) => {
             const getStatusIcon = () => {
               switch (plan.status) {
                 case "completed":

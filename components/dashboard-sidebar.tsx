@@ -13,6 +13,8 @@ import {
   Calendar,
   ClipboardList,
   Workflow,
+  FileText,
+  BookOpen,
 } from "lucide-react"
 import { getCurrentUser, signOut } from "@/lib/auth"
 import { useEffect, useState } from "react"
@@ -26,6 +28,8 @@ const navItems = [
   { href: "/dashboard/meeting", label: "Meeting", icon: Calendar },
   { href: "/dashboard/planning", label: "Planning", icon: ClipboardList },
   { href: "/dashboard/diagrams", label: "Flow & Diagrams", icon: Workflow },
+  { href: "/dashboard/files", label: "Files", icon: FileText },
+  { href: "/dashboard/wiki", label: "Knowledge Base", icon: BookOpen },
   { href: "/dashboard/community", label: "Community", icon: Users },
   { href: "/dashboard/ai-tools", label: "AI Tools", icon: Sparkles },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },

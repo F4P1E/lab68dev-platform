@@ -121,7 +121,18 @@
   * {
     @apply border-border outline-ring/50;
   }
+  
+  html {
+    @apply transition-colors duration-200;
+  }
+  
   body {
+    @apply bg-background text-foreground transition-colors duration-200;
+  }
+  
+  /* Ensure proper theme inheritance */
+  #__next,
+  [data-nextjs-scroll-focus-boundary] {
     @apply bg-background text-foreground;
   }
 }

@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { MessageSquare, X } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { MessageSquare, X, Search, Filter } from "lucide-react"
 import { getCurrentUser } from "@/lib/auth"
 import { getTranslations, getUserLanguage, type Language } from "@/lib/i18n"
 
@@ -28,6 +29,8 @@ export default function CommunityPage() {
     category: "",
     customCategory: "",
   })
+  const [searchQuery, setSearchQuery] = useState("")
+  const [filterCategory, setFilterCategory] = useState<string>("all")
   const [language, setLanguage] = useState<Language>("en")
   const t = getTranslations(language)
 
@@ -90,8 +93,20 @@ export default function CommunityPage() {
     return `${Math.floor(seconds / 86400)}d ago`
   }
 
+  // Filter discussions
+  const filteredDiscussions = discussions.filter((discussion) => {
+    const matchesSearch =
+      discussion.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      discussion.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      discussion.author.toLowerCase().includes(searchQuery.toLowerCase())
+
+    const matchesCategory = filterCategory === "all" || discussion.category === filterCategory
+
+    return matchesSearch && matchesCategory
+  })
+
   // Group discussions by category
-  const discussionsByCategory = discussions.reduce(
+  const discussionsByCategory = filteredDiscussions.reduce(
     (acc, discussion) => {
       if (!acc[discussion.category]) {
         acc[discussion.category] = []
@@ -118,13 +133,65 @@ export default function CommunityPage() {
         </div>
       </div>
 
+      {/* Search and Filter Section */}
+      <div className="space-y-4">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search discussions..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <select
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+            className="bg-card border border-border px-4 py-2 text-sm focus:outline-none focus:border-primary"
+            title="Filter by category"
+          >
+            <option value="all">All Categories</option>
+            {PREDEFINED_CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {t.community[cat as keyof typeof t.community] as string}
+              </option>
+            ))}
+          </select>
+        </div>
+        {(searchQuery || filterCategory !== "all") && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Filter className="h-4 w-4" />
+            <span>
+              Showing {filteredDiscussions.length} of {discussions.length} discussions
+            </span>
+            <button
+              onClick={() => {
+                setSearchQuery("")
+                setFilterCategory("all")
+              }}
+              className="text-primary hover:underline"
+            >
+              Clear filters
+            </button>
+          </div>
+        )}
+      </div>
+
       {/* Discussions by Category */}
-      {discussions.length === 0 ? (
+      {filteredDiscussions.length === 0 ? (
         <div className="border border-border p-12 text-center space-y-4">
           <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground" />
           <div>
-            <h3 className="text-xl font-bold mb-2">{t.community.noDiscussions}</h3>
-            <p className="text-muted-foreground">{t.community.startDiscussion}</p>
+            <h3 className="text-xl font-bold mb-2">
+              {searchQuery || filterCategory !== "all" ? "No discussions found" : t.community.noDiscussions}
+            </h3>
+            <p className="text-muted-foreground">
+              {searchQuery || filterCategory !== "all"
+                ? "Try adjusting your search or filters"
+                : t.community.startDiscussion}
+            </p>
           </div>
         </div>
       ) : (
@@ -170,6 +237,7 @@ export default function CommunityPage() {
               <button
                 onClick={() => setShowNewDiscussionModal(false)}
                 className="text-muted-foreground hover:text-foreground"
+                title="Close"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -201,6 +269,7 @@ export default function CommunityPage() {
                   value={newDiscussion.category}
                   onChange={(e) => setNewDiscussion({ ...newDiscussion, category: e.target.value })}
                   className="w-full bg-card border border-border px-4 py-2 text-sm focus:outline-none focus:border-primary"
+                  title={t.community.category}
                 >
                   <option value="">{t.community.selectCategory}</option>
                   {PREDEFINED_CATEGORIES.map((cat) => (
