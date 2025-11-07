@@ -17,6 +17,7 @@ import {
   BookOpen,
   MessageSquare,
   MessageCircle,
+  Palette,
 } from "lucide-react"
 import { getCurrentUser, signOut } from "@/lib/auth"
 import { useEffect, useState } from "react"
@@ -28,6 +29,7 @@ const navItems = [
   { href: "/dashboard/projects", label: "Projects", icon: FolderKanban },
   { href: "/dashboard/collaborators", label: "Collaborators", icon: Users },
   { href: "/dashboard/chat", label: "Chat", icon: MessageCircle },
+  { href: "/dashboard/whiteboard", label: "Whiteboard", icon: Palette },
   { href: "/dashboard/todo", label: "To Do", icon: CheckSquare },
   { href: "/dashboard/meeting", label: "Meeting", icon: Calendar },
   { href: "/dashboard/planning", label: "Planning", icon: ClipboardList },

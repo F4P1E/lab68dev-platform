@@ -389,6 +389,48 @@ export interface Translations {
     clear: string
     zoom: string
   }
+  // Whiteboard
+  whiteboard: {
+    title: string
+    newWhiteboard: string
+    whiteboardName: string
+    description: string
+    create: string
+    open: string
+    delete: string
+    confirmDelete: string
+    noWhiteboards: string
+    startDrawing: string
+    save: string
+    export: string
+    exportPNG: string
+    exportSVG: string
+    tools: string
+    pen: string
+    line: string
+    rectangle: string
+    circle: string
+    ellipse: string
+    text: string
+    eraser: string
+    select: string
+    color: string
+    customColor: string
+    strokeWidth: string
+    fillShape: string
+    fillColor: string
+    fontSize: string
+    undo: string
+    redo: string
+    clearAll: string
+    confirmClear: string
+    elements: string
+    collaborators: string
+    updated: string
+    backToWhiteboards: string
+    enterText: string
+    saved: string
+  }
   // Files feature
   files: {
     title: string
@@ -897,6 +939,47 @@ const translations: Record<Language, any> = {
       onDiagram: "on diagram",
       onProject: "on project",
       onFile: "on file",
+    },
+    whiteboard: {
+      title: "Whiteboard",
+      newWhiteboard: "New Whiteboard",
+      whiteboardName: "Whiteboard Name",
+      description: "Description",
+      create: "Create",
+      open: "Open",
+      delete: "Delete",
+      confirmDelete: "Are you sure you want to delete this whiteboard?",
+      noWhiteboards: "No whiteboards yet",
+      startDrawing: "Create your first whiteboard to start drawing",
+      save: "Save",
+      export: "Export",
+      exportPNG: "Export as PNG",
+      exportSVG: "Export as SVG",
+      tools: "Tools",
+      pen: "Pen",
+      line: "Line",
+      rectangle: "Rectangle",
+      circle: "Circle",
+      ellipse: "Ellipse",
+      text: "Text",
+      eraser: "Eraser",
+      select: "Select",
+      color: "Color",
+      customColor: "Custom Color",
+      strokeWidth: "Stroke Width",
+      fillShape: "Fill Shape",
+      fillColor: "Fill Color",
+      fontSize: "Font Size",
+      undo: "Undo",
+      redo: "Redo",
+      clearAll: "Clear All",
+      confirmClear: "Clear the entire whiteboard?",
+      elements: "elements",
+      collaborators: "collaborator(s)",
+      updated: "Updated",
+      backToWhiteboards: "Back to Whiteboards",
+      enterText: "Enter text:",
+      saved: "Whiteboard saved!",
     },
     files: {
       title: "Files & Documents",

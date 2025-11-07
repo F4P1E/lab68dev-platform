@@ -100,7 +100,8 @@ The build step runs Next.js static analysis, type-checking, and route bundling.
 | **Team Management** | `lib/team.ts` exposes helpers for permissions, activity logging, and "time ago" formatting. |
 | **Chat & Messaging** | Real-time team communication with chat rooms, direct messages, typing indicators, reactions, and @mentions. |
 | **Comments System** | Contextual collaboration on tasks, diagrams, and projects with threaded comments, mentions, and resolution tracking. |
-| **Files Library** | Upload, categorize, and filter project files and links with type filters and metadata. |
+| **Whiteboard** | Collaborative drawing canvas with freehand pen, shapes (rectangle, circle, line), text, color picker, stroke width, fill options, undo/redo, export to PNG/SVG, and collaborator invitations. |
+| **Files Library** | Upload files from your computer (max 10MB), add external links, categorize by project/task/meeting, search and filter by type and category. |
 | **Meetings & Planning** | Schedule meetings, capture plans/milestones, and log progress. |
 | **Wiki & Community** | Knowledge base articles, category filtering, and community discussion threads. |
 | **AI Tools** | Scaffolding for AI-assisted workflows via the `/dashboard/ai-tools` route. |

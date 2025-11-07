@@ -28,7 +28,7 @@ export default function ChatPage() {
   const [typingUsers, setTypingUsers] = useState<string[]>([])
   const [showNewChatModal, setShowNewChatModal] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const typingTimeoutRef = useRef<NodeJS.Timeout>()
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Load user's chat rooms
   useEffect(() => {
@@ -318,6 +318,7 @@ export default function ChatPage() {
                     name="roomName"
                     type="text"
                     required
+                    placeholder="Enter room name"
                     className="w-full px-4 py-2 border border-input bg-background"
                   />
                 </div>

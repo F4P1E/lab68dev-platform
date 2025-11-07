@@ -37,6 +37,8 @@ export default function FilesPage() {
   const [files, setFiles] = useState<File[]>([])
   const [showModal, setShowModal] = useState(false)
   const [modalType, setModalType] = useState<"upload" | "link">("upload")
+  const [selectedFile, setSelectedFile] = useState<globalThis.File | null>(null)
+  const [uploading, setUploading] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -89,6 +91,7 @@ export default function FilesPage() {
   const handleOpenModal = (type: "upload" | "link") => {
     setModalType(type)
     setShowModal(true)
+    setSelectedFile(null)
     setFormData({
       name: "",
       description: "",
@@ -100,6 +103,7 @@ export default function FilesPage() {
 
   const handleCloseModal = () => {
     setShowModal(false)
+    setSelectedFile(null)
     setFormData({
       name: "",
       description: "",
@@ -109,25 +113,93 @@ export default function FilesPage() {
     })
   }
 
-  const handleSave = () => {
-    const user = getCurrentUser()
-    if (!user || !formData.name || !formData.url) return
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
 
-    const newFile: File = {
-      id: Date.now().toString(),
-      name: formData.name,
-      description: formData.description,
-      type: modalType === "upload" ? "uploaded" : "link",
-      url: formData.url,
-      userId: user.id,
-      userEmail: user.email,
-      createdAt: new Date().toISOString(),
-      relatedTo: formData.relatedTo,
-      relatedId: formData.relatedId || undefined,
+    // Check file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert("File size must be less than 10MB")
+      return
     }
 
-    saveFiles([...files, newFile])
-    handleCloseModal()
+    setSelectedFile(file)
+    // Auto-fill name from filename
+    if (!formData.name) {
+      setFormData((prev) => ({ ...prev, name: file.name }))
+    }
+  }
+
+  const handleSave = async () => {
+    const user = getCurrentUser()
+    if (!user) return
+
+    if (modalType === "upload") {
+      if (!selectedFile) {
+        alert("Please select a file to upload")
+        return
+      }
+
+      setUploading(true)
+
+      try {
+        // Convert file to base64 for localStorage storage
+        // In a real app, you would upload to a server/cloud storage
+        const reader = new FileReader()
+        reader.onload = () => {
+          const base64 = reader.result as string
+
+          const newFile: File = {
+            id: Date.now().toString(),
+            name: formData.name || selectedFile.name,
+            description: formData.description,
+            type: "uploaded",
+            url: base64, // In real app, this would be the server URL
+            userId: user.id,
+            userEmail: user.email,
+            createdAt: new Date().toISOString(),
+            relatedTo: formData.relatedTo,
+            relatedId: formData.relatedId || undefined,
+          }
+
+          saveFiles([...files, newFile])
+          setUploading(false)
+          handleCloseModal()
+        }
+
+        reader.onerror = () => {
+          alert("Error reading file")
+          setUploading(false)
+        }
+
+        reader.readAsDataURL(selectedFile)
+      } catch (error) {
+        alert("Error uploading file")
+        setUploading(false)
+      }
+    } else {
+      // Link type
+      if (!formData.name || !formData.url) {
+        alert("Please fill in name and URL")
+        return
+      }
+
+      const newFile: File = {
+        id: Date.now().toString(),
+        name: formData.name,
+        description: formData.description,
+        type: "link",
+        url: formData.url,
+        userId: user.id,
+        userEmail: user.email,
+        createdAt: new Date().toISOString(),
+        relatedTo: formData.relatedTo,
+        relatedId: formData.relatedId || undefined,
+      }
+
+      saveFiles([...files, newFile])
+      handleCloseModal()
+    }
   }
 
   const handleDelete = (fileId: string) => {
@@ -347,6 +419,27 @@ export default function FilesPage() {
               </button>
             </div>
             <div className="space-y-4">
+              {modalType === "upload" && (
+                <div className="space-y-2">
+                  <label htmlFor="file-upload" className="text-sm font-medium">
+                    Select File
+                  </label>
+                  <input
+                    id="file-upload"
+                    type="file"
+                    onChange={handleFileSelect}
+                    className="w-full bg-card border border-border px-4 py-2 text-sm focus:outline-none focus:border-primary file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-primary file:text-primary-foreground file:cursor-pointer"
+                    accept="*/*"
+                    title="Choose file to upload"
+                  />
+                  {selectedFile && (
+                    <p className="text-xs text-muted-foreground">
+                      Selected: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(2)} KB)
+                    </p>
+                  )}
+                  <p className="text-xs text-muted-foreground">Maximum file size: 10MB</p>
+                </div>
+              )}
               <div className="space-y-2">
                 <label className="text-sm font-medium">
                   {modalType === "upload" ? t.files.fileName : t.files.linkTitle}
@@ -369,18 +462,18 @@ export default function FilesPage() {
                   className="w-full bg-card border border-border px-4 py-2 text-sm focus:outline-none focus:border-primary resize-none"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  {modalType === "upload" ? t.files.fileUrl : t.files.linkUrl}
-                </label>
-                <input
-                  type="url"
-                  value={formData.url}
-                  onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-                  placeholder={modalType === "upload" ? "https://..." : t.files.linkUrl}
-                  className="w-full bg-card border border-border px-4 py-2 text-sm focus:outline-none focus:border-primary"
-                />
-              </div>
+              {modalType === "link" && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t.files.linkUrl}</label>
+                  <input
+                    type="url"
+                    value={formData.url}
+                    onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                    placeholder={t.files.linkUrl}
+                    className="w-full bg-card border border-border px-4 py-2 text-sm focus:outline-none focus:border-primary"
+                  />
+                </div>
+              )}
               <div className="space-y-2">
                 <label className="text-sm font-medium">{t.files.relatedTo}</label>
                 <select
@@ -402,13 +495,18 @@ export default function FilesPage() {
                 </select>
               </div>
               <div className="flex gap-2">
-                <Button onClick={handleSave} className="flex-1">
-                  {modalType === "upload" ? t.files.upload : t.files.addLinkButton}
+                <Button onClick={handleSave} className="flex-1" disabled={uploading}>
+                  {uploading
+                    ? "Uploading..."
+                    : modalType === "upload"
+                      ? t.files.upload
+                      : t.files.addLinkButton}
                 </Button>
                 <Button
                   variant="outline"
                   onClick={handleCloseModal}
                   className="flex-1 border-foreground text-foreground hover:bg-foreground hover:text-background"
+                  disabled={uploading}
                 >
                   {t.files.cancel}
                 </Button>
