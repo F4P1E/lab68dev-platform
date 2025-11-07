@@ -20,7 +20,7 @@ If you are new to the project, skim `README.md` for a high-level tour before div
 
 ### Prerequisites
 
-- Node.js ≥ 16
+- Node.js ≥ 18
 - pnpm ≥ 8 (`corepack enable` is recommended)
 - GitHub account with a fork or branch permissions
 
