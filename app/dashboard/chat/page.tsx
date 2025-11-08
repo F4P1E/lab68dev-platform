@@ -17,6 +17,7 @@ import {
   type ChatRoom,
   type Message,
 } from "@/lib/chat"
+import { updateMessage, deleteMessage } from "@/lib/chat-supabase"
 
 export default function ChatPage() {
   const t = getTranslations("en") // Default to English, make configurable if needed
@@ -27,6 +28,8 @@ export default function ChatPage() {
   const [messageInput, setMessageInput] = useState("")
   const [typingUsers, setTypingUsers] = useState<string[]>([])
   const [showNewChatModal, setShowNewChatModal] = useState(false)
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null)
+  const [editContent, setEditContent] = useState("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -112,6 +115,56 @@ export default function ChatPage() {
     setRooms((prev) => [...prev, room])
     setSelectedRoom(room)
     setShowNewChatModal(false)
+  }
+
+  function handleStartEdit(messageId: string, content: string) {
+    setEditingMessageId(messageId)
+    setEditContent(content)
+  }
+
+  function handleCancelEdit() {
+    setEditingMessageId(null)
+    setEditContent("")
+  }
+
+  async function handleSaveEdit(messageId: string) {
+    if (!editContent.trim()) return
+
+    try {
+      await updateMessage(messageId, editContent)
+      // Update local state
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === messageId
+            ? { ...msg, content: editContent, edited: true }
+            : msg
+        )
+      )
+      setEditingMessageId(null)
+      setEditContent("")
+      if (selectedRoom) {
+        loadMessages(selectedRoom.id)
+      }
+    } catch (error) {
+      console.error("Failed to update message:", error)
+      alert("Failed to update message")
+    }
+  }
+
+  async function handleDeleteMessage(messageId: string) {
+    if (!confirm("Are you sure you want to delete this message?")) return
+
+    try {
+      await deleteMessage(messageId)
+      // Update local state
+      setMessages((prev) => prev.filter((msg) => msg.id !== messageId))
+      if (selectedRoom) {
+        loadMessages(selectedRoom.id)
+      }
+    } catch (error) {
+      console.error("Failed to delete message:", error)
+      alert("Failed to delete message")
+    }
   }
 
   function formatTime(timestamp: string): string {
@@ -209,7 +262,60 @@ export default function ChatPage() {
                     {msg.userId !== currentUser && (
                       <p className="text-xs font-medium mb-1">{msg.userName}</p>
                     )}
-                    <p className="text-sm break-words">{msg.content}</p>
+                    
+                    {/* Edit mode */}
+                    {editingMessageId === msg.id ? (
+                      <div className="space-y-2">
+                        <label htmlFor={`edit-${msg.id}`} className="sr-only">Edit message</label>
+                        <textarea
+                          id={`edit-${msg.id}`}
+                          value={editContent}
+                          onChange={(e) => setEditContent(e.target.value)}
+                          className="w-full text-sm bg-background text-foreground p-2 rounded border border-border"
+                          rows={3}
+                          placeholder="Edit your message..."
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleSaveEdit(msg.id)}
+                            className="px-3 py-1 bg-primary text-primary-foreground text-xs rounded hover:bg-primary/90"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={handleCancelEdit}
+                            className="px-3 py-1 bg-muted text-muted-foreground text-xs rounded hover:bg-muted/80"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-sm break-words">{msg.content}</p>
+                        
+                        {/* Edit/Delete buttons for own messages */}
+                        {msg.userId === currentUser && (
+                          <div className="flex gap-2 mt-2">
+                            <button
+                              onClick={() => handleStartEdit(msg.id, msg.content)}
+                              className="text-xs opacity-50 hover:opacity-100 transition-opacity"
+                              title="Edit message"
+                            >
+                              ✏️ Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteMessage(msg.id)}
+                              className="text-xs opacity-50 hover:opacity-100 transition-opacity"
+                              title="Delete message"
+                            >
+                              🗑️ Delete
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    )}
+                    
                     <div className="flex items-center justify-between mt-2 gap-2">
                       <span className="text-xs opacity-70">
                         {formatTime(msg.createdAt)}
@@ -231,17 +337,19 @@ export default function ChatPage() {
                       )}
                     </div>
                     {/* Quick reactions */}
-                    <div className="flex gap-1 mt-2">
-                      {['👍', '❤️', '😊', '🎉'].map((emoji) => (
-                        <button
-                          key={emoji}
-                          onClick={() => handleReaction(msg.id, emoji)}
-                          className="text-xs opacity-50 hover:opacity-100 transition-opacity"
-                        >
-                          {emoji}
-                        </button>
-                      ))}
-                    </div>
+                    {editingMessageId !== msg.id && (
+                      <div className="flex gap-1 mt-2">
+                        {['👍', '❤️', '😊', '🎉'].map((emoji) => (
+                          <button
+                            key={emoji}
+                            onClick={() => handleReaction(msg.id, emoji)}
+                            className="text-xs opacity-50 hover:opacity-100 transition-opacity"
+                          >
+                            {emoji}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

@@ -114,6 +114,29 @@ export async function getMessages(roomId: string, limit = 100) {
   return data?.reverse() || []
 }
 
+export async function updateMessage(id: string, content: string) {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('messages')
+    .update({ content, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single()
+  
+  if (error) throw error
+  return data
+}
+
+export async function deleteMessage(id: string) {
+  const supabase = createClient()
+  const { error } = await supabase
+    .from('messages')
+    .delete()
+    .eq('id', id)
+  
+  if (error) throw error
+}
+
 export async function addReaction(messageId: string, emoji: string, userId: string) {
   const supabase = createClient()
   

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { getCurrentUser } from "@/lib/auth"
 import { getTranslations, getUserLanguage } from "@/lib/i18n"
-import { Plus, Trash2, Check, X, CheckCircle2, Circle, Search, Filter } from "lucide-react"
+import { Plus, Trash2, Check, X, CheckCircle2, Circle, Search, Filter, Play, Pause, RotateCcw, Coffee, Timer } from "lucide-react"
 import { getTodos, createTodo, updateTodo, deleteTodo, type Todo as DBTodo } from "@/lib/database"
 
 interface Task {
@@ -38,6 +38,12 @@ export default function TodoPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const t = getTranslations(language).todo
+
+  // Pomodoro Timer State
+  const [pomodoroTime, setPomodoroTime] = useState(25 * 60) // 25 minutes in seconds
+  const [pomodoroActive, setPomodoroActive] = useState(false)
+  const [pomodoroMode, setPomodoroMode] = useState<'work' | 'break'>('work')
+  const [pomodoroSessions, setPomodoroSessions] = useState(0)
 
   const loadTasks = useCallback(async () => {
     const user = getCurrentUser()
@@ -81,6 +87,62 @@ export default function TodoPage() {
     window.addEventListener("storage", handleStorageChange)
     return () => window.removeEventListener("storage", handleStorageChange)
   }, [loadTasks])
+
+  // Pomodoro Timer Effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null
+
+    if (pomodoroActive && pomodoroTime > 0) {
+      interval = setInterval(() => {
+        setPomodoroTime((time) => time - 1)
+      }, 1000)
+    } else if (pomodoroTime === 0) {
+      // Timer finished
+      setPomodoroActive(false)
+      
+      if (pomodoroMode === 'work') {
+        // Work session completed
+        setPomodoroSessions((s) => s + 1)
+        // Notification sound/alert could be added here
+        alert('Work session completed! Time for a break.')
+        // Switch to break mode
+        setPomodoroMode('break')
+        setPomodoroTime(5 * 60) // 5 minute break
+      } else {
+        // Break completed
+        alert('Break is over! Ready for another session?')
+        setPomodoroMode('work')
+        setPomodoroTime(25 * 60) // 25 minute work
+      }
+    }
+
+    return () => {
+      if (interval) clearInterval(interval)
+    }
+  }, [pomodoroActive, pomodoroTime, pomodoroMode])
+
+  const startPomodoro = () => {
+    setPomodoroActive(true)
+  }
+
+  const pausePomodoro = () => {
+    setPomodoroActive(false)
+  }
+
+  const resetPomodoro = () => {
+    setPomodoroActive(false)
+    if (pomodoroMode === 'work') {
+      setPomodoroTime(25 * 60)
+    } else {
+      setPomodoroTime(5 * 60)
+    }
+  }
+
+  const formatPomodoroTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+  }
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
@@ -179,11 +241,108 @@ export default function TodoPage() {
           <h1 className="text-4xl font-bold mb-2">{t.title}</h1>
           <p className="text-muted-foreground">{t.subtitle}</p>
         </div>
-        <Button onClick={() => setShowForm(!showForm)} className="gap-2">
-          <Plus className="h-4 w-4" />
-          {t.addTask}
-        </Button>
+        <div className="flex gap-3">
+          <Button onClick={() => setShowForm(!showForm)} className="gap-2">
+            <Plus className="h-4 w-4" />
+            {t.addTask}
+          </Button>
+        </div>
       </div>
+
+      {/* Pomodoro Timer */}
+      <Card className="border border-border">
+        <div className="p-6">
+          <div className="flex items-center gap-2 mb-6">
+            <Timer className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-semibold">Pomodoro Timer</h2>
+            <span className={`ml-auto px-3 py-1 rounded-full text-xs font-medium ${
+              pomodoroMode === 'work' 
+                ? 'bg-primary/10 text-primary' 
+                : 'bg-green-500/10 text-green-600'
+            }`}>
+              {pomodoroMode === 'work' ? 'Focus' : 'Break'}
+            </span>
+          </div>
+
+          <div className="grid md:grid-cols-[1fr_auto] gap-8 items-center">
+            {/* Timer Display */}
+            <div className="text-center space-y-6">
+              {/* Large Time Display */}
+              <div className="relative inline-flex">
+                <div className="text-7xl font-bold font-mono tabular-nums">
+                  {formatPomodoroTime(pomodoroTime)}
+                </div>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="max-w-md mx-auto">
+                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                  <div 
+                    className={`h-full transition-all duration-1000 ${
+                      pomodoroMode === 'work' ? 'bg-primary' : 'bg-green-500'
+                    }`}
+                    style={{ 
+                      width: `${(pomodoroTime / (pomodoroMode === 'work' ? 25 * 60 : 5 * 60)) * 100}%` 
+                    }}
+                  />
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">
+                  {pomodoroSessions} sessions completed today
+                </p>
+              </div>
+
+              {/* Controls */}
+              <div className="flex items-center justify-center gap-3">
+                {!pomodoroActive ? (
+                  <Button onClick={startPomodoro} size="lg" className="gap-2 min-w-[120px]">
+                    <Play className="h-4 w-4" />
+                    Start
+                  </Button>
+                ) : (
+                  <Button onClick={pausePomodoro} size="lg" variant="outline" className="gap-2 min-w-[120px]">
+                    <Pause className="h-4 w-4" />
+                    Pause
+                  </Button>
+                )}
+                <Button onClick={resetPomodoro} size="lg" variant="ghost" className="gap-2">
+                  <RotateCcw className="h-4 w-4" />
+                  Reset
+                </Button>
+              </div>
+            </div>
+
+            {/* Info Sidebar */}
+            <div className="md:border-l md:border-border md:pl-8 space-y-4 max-w-xs">
+              <div>
+                <h3 className="text-sm font-medium mb-3 text-muted-foreground">Technique</h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-primary" />
+                    <span>25 min work</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-green-500" />
+                    <span>5 min break</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-border">
+                <div className="flex items-center justify-between text-sm mb-2">
+                  <span className="text-muted-foreground">Daily Goal</span>
+                  <span className="font-medium">{pomodoroSessions}/8</span>
+                </div>
+                <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-primary transition-all duration-300"
+                    style={{ width: `${Math.min((pomodoroSessions / 8) * 100, 100)}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
 
       {/* Search and Filter Section */}
       <div className="space-y-4">
