@@ -18,6 +18,7 @@ import {
   MessageSquare,
   MessageCircle,
   Palette,
+  Gamepad2,
 } from "lucide-react"
 import { getCurrentUser, signOut } from "@/lib/auth"
 import { useEffect, useState } from "react"
@@ -37,6 +38,7 @@ const navItems = [
   { href: "/dashboard/files", label: "Files", icon: FileText },
   { href: "/dashboard/wiki", label: "Knowledge Base", icon: BookOpen },
   { href: "/dashboard/community", label: "Community", icon: MessageSquare },
+  { href: "/dashboard/entertainment", label: "Entertainment", icon: Gamepad2 },
   { href: "/dashboard/ai-tools", label: "AI Tools", icon: Sparkles },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
 ]
@@ -110,7 +112,10 @@ export function DashboardSidebar() {
                 href={item.href}
                 className="block"
                 style={{
-                  animation: isLoaded ? 'none' : `staggerIn 0.3s ease-out forwards`,
+                  animationName: isLoaded ? 'none' : 'staggerIn',
+                  animationDuration: isLoaded ? '0s' : '0.3s',
+                  animationTimingFunction: isLoaded ? 'ease-out' : 'ease-out',
+                  animationFillMode: isLoaded ? 'forwards' : 'forwards',
                   animationDelay: `${delay}ms`,
                   opacity: isLoaded ? 1 : 0,
                   transform: isLoaded ? 'translateX(0)' : 'translateX(-20px)',
