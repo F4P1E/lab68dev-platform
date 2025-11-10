@@ -1,11 +1,13 @@
 # Team Management Implementation Guide
 
 ## Overview
+
 This guide explains the enhancements made to add comprehensive team management with roles, permissions, and activity tracking to the lab68dev platform.
 
 ## 1. Core Infrastructure
 
 ### Files Created
+
 - **`lib/team.ts`** - Core team management utilities
   - Role types: `owner`, `admin`, `editor`, `viewer`
   - Permission system with granular controls
@@ -13,6 +15,7 @@ This guide explains the enhancements made to add comprehensive team management w
   - Helper functions for role management
 
 ### Translation Updates
+
 - **`lib/i18n.ts`** - Added 20 new keys for team management
   - Role names and selection
   - Permission descriptions
@@ -22,6 +25,7 @@ This guide explains the enhancements made to add comprehensive team management w
 ## 2. Data Structure Changes
 
 ### Updated Project Interface
+
 ```typescript
 interface Project {
   id: string
@@ -36,6 +40,7 @@ interface Project {
 ```
 
 ### New CollaboratorWithRole Interface
+
 ```typescript
 interface CollaboratorWithRole {
   email: string
@@ -50,28 +55,32 @@ interface CollaboratorWithRole {
 
 ### Role Capabilities
 
-**Owner** (Project Creator)
+#### Owner (Project Creator)
+
 - ✅ Can edit project
 - ✅ Can delete project
 - ✅ Can invite collaborators
 - ✅ Can manage roles
 - ✅ Can view activity
 
-**Admin**
+#### Admin
+
 - ✅ Can edit project
 - ❌ Cannot delete project
 - ✅ Can invite collaborators
 - ✅ Can manage roles
 - ✅ Can view activity
 
-**Editor**
+#### Editor
+
 - ✅ Can edit project
 - ❌ Cannot delete project
 - ❌ Cannot invite collaborators
 - ❌ Cannot manage roles
 - ✅ Can view activity
 
-**Viewer**
+#### Viewer
+
 - ❌ Cannot edit project
 - ❌ Cannot delete project
 - ❌ Cannot invite collaborators
@@ -81,6 +90,7 @@ interface CollaboratorWithRole {
 ## 4. Activity Tracking
 
 ### Tracked Activities
+
 - Project created
 - Project updated
 - Project deleted
@@ -91,6 +101,7 @@ interface CollaboratorWithRole {
 - Project accessed
 
 ### Activity Data Structure
+
 ```typescript
 interface Activity {
   id: string
@@ -104,6 +115,7 @@ interface Activity {
 ```
 
 ### Storage
+
 - Activities stored in `localStorage` under key `lab68_activities`
 - Maximum 1000 activities retained
 - Older activities automatically pruned
@@ -111,6 +123,7 @@ interface Activity {
 ## 5. Projects Page Enhancements
 
 ### Adding Collaborators with Roles
+
 1. User clicks "Collaborators" button on project card
 2. Modal shows existing collaborators with their roles
 3. Owner/Admin can add new collaborators:
@@ -120,6 +133,7 @@ interface Activity {
 4. Activity is logged: "Added [email] as [role]"
 
 ### Role Management
+
 1. Owner/Admin sees "Change Role" button next to each collaborator
 2. Clicking opens role selector dropdown
 3. Changing role:
@@ -128,6 +142,7 @@ interface Activity {
    - Updates `lastUpdated` timestamp
 
 ### Permission Guards
+
 - Edit button: Disabled for Viewers
 - Delete button: Only visible to Owner
 - Add Collaborator: Only visible to Owner/Admin
@@ -136,7 +151,9 @@ interface Activity {
 ## 6. Collaborators Page Enhancements
 
 ### Enhanced Collaborator Cards
+
 Each card now shows:
+
 - **Role Badge**: Color-coded by role
   - Owner: Primary color (green)
   - Admin: Blue
@@ -148,12 +165,14 @@ Each card now shows:
 - **Project Count**: Number of projects they can access
 
 ### Activity Timeline
+
 - Dedicated "Recent Activity" section per collaborator
 - Shows last 10 activities
 - Filterable by action type
 - Includes timestamps and details
 
 ### Role Management UI
+
 - "Change Role" dropdown for each collaborator
 - Only visible to users with `canManageRoles` permission
 - Confirmation dialog for sensitive changes (e.g., Admin → Viewer)
@@ -398,6 +417,7 @@ logActivity({
 ## 9. Migration Strategy
 
 ### For Existing Projects
+
 Run migration script to convert old collaborators format:
 
 ```javascript
@@ -429,18 +449,21 @@ const migrateProjects = () => {
 ## 10. Testing Checklist
 
 ### Role Permissions
+
 - [ ] Owner can perform all actions
 - [ ] Admin can edit but not delete
 - [ ] Editor can edit but not manage roles/collaborators
 - [ ] Viewer can only view
 
 ### Activity Tracking
+
 - [ ] All actions are logged correctly
 - [ ] Timestamps are accurate
 - [ ] Activity feed displays properly
 - [ ] Old activities are pruned at 1000 limit
 
 ### UI/UX
+
 - [ ] Role badges display with correct colors
 - [ ] Last active timestamps update
 - [ ] Permission guards prevent unauthorized actions
@@ -448,6 +471,7 @@ const migrateProjects = () => {
 - [ ] Confirmation dialogs for role changes
 
 ### Multi-language
+
 - [ ] All new labels translate correctly
 - [ ] Role names display in selected language
 - [ ] Activity messages translate properly
