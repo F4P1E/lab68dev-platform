@@ -428,7 +428,7 @@ export default function ProjectsPage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredProjects.map((project) => {
             const currentUser = getCurrentUser()
-            const isOwner = project.userId === currentUser?.email
+            const isOwner = project.userId === currentUser?.id
             return (
               <Card key={project.id} className="border-border p-4 sm:p-6 bg-card hover:border-primary transition-colors">
                 <div className="space-y-3 sm:space-y-4">
