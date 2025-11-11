@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { LanguageSwitcher } from "./language-switcher"
 import { getTranslations, getUserLanguage } from "@/lib/i18n"
 import { useEffect, useState } from "react"
-import { Code2, FileText, Users, BookOpen, LogIn, UserPlus } from "lucide-react"
+import { Code2, FileText, Users, BookOpen, LogIn, UserPlus, Coffee } from "lucide-react"
 
 export function Header() {
   const pathname = usePathname()
@@ -84,7 +84,22 @@ export function Header() {
               <LanguageSwitcher />
             </div>
 
-            {/* Sign Up Card - Primary */}
+            {/* Sponsor Card */}
+            <Link 
+              href="https://buymeacoffee.com/lab68dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative"
+            >
+              <div className="flex items-center gap-2 px-4 py-2 border border-yellow-500 bg-yellow-500/10 hover:bg-yellow-500 hover:shadow-lg transition-all duration-200">
+                <Coffee className="h-4 w-4 text-yellow-500 group-hover:text-white transition-colors" />
+                <span className="text-sm font-medium text-yellow-500 group-hover:text-white transition-colors">
+                  Sponsor
+                </span>
+              </div>
+            </Link>
+
+            {/* Get Started Card - Combined Sign Up/Sign In */}
             <Link 
               href="/signup"
               className="group relative"
@@ -92,20 +107,7 @@ export function Header() {
               <div className="flex items-center gap-2 px-4 py-2 border-2 border-primary bg-primary/10 hover:bg-primary hover:shadow-lg transition-all duration-200">
                 <UserPlus className="h-4 w-4 text-primary group-hover:text-primary-foreground transition-colors" />
                 <span className="text-sm font-medium text-primary group-hover:text-primary-foreground transition-colors">
-                  {t.nav.signUp}
-                </span>
-              </div>
-            </Link>
-
-            {/* Sign In Card */}
-            <Link 
-              href="/login"
-              className="group relative"
-            >
-              <div className="flex items-center gap-2 px-4 py-2 border border-border bg-card hover:border-primary hover:shadow-lg transition-all duration-200">
-                <LogIn className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                <span className="text-sm font-medium group-hover:text-primary transition-colors">
-                  {t.nav.signIn}
+                  Get Started
                 </span>
               </div>
             </Link>
