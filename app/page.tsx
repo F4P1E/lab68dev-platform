@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
@@ -231,9 +231,9 @@ export default function HomePage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">Project Management</h3>
+                  <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">Jira-like Project Management</h3>
                   <p className="text-muted-foreground">
-                    Organize your projects with Kanban boards, task tracking, and team collaboration tools. Keep everyone on the same page.
+                    Full-featured project management with Kanban boards, sprint planning, backlog management, epic hierarchy, advanced filters, and real-time collaboration. Complete Jira-like experience with role-based access control.
                   </p>
                 </div>
 
@@ -244,9 +244,9 @@ export default function HomePage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">AI-Powered Tools</h3>
+                  <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">AI-Powered Assistant</h3>
                   <p className="text-muted-foreground">
-                    Leverage artificial intelligence to enhance your workflow. From code generation to smart suggestions and automation.
+                    Integrated AI assistant for code generation, smart suggestions, task automation, and intelligent workflows. Boost productivity with cutting-edge artificial intelligence.
                   </p>
                 </div>
 
@@ -259,7 +259,7 @@ export default function HomePage() {
                   </div>
                   <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">Real-Time Collaboration</h3>
                   <p className="text-muted-foreground">
-                    Work together seamlessly with live chat, comments, mentions, and shared whiteboards. Collaborate from anywhere.
+                    Live chat with typing indicators, threaded comments with @mentions, collaborative whiteboard with drawing tools, and real-time updates. Work together seamlessly from anywhere in the world.
                   </p>
                 </div>
 
@@ -289,6 +289,19 @@ export default function HomePage() {
                   </p>
                 </div>
 
+                {/* Resume Editor */}
+                <div className="border border-border p-6 hover:border-primary transition-all duration-300 group">
+                  <div className="mb-4 text-primary">
+                    <svg className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">Live Resume Editor</h3>
+                  <p className="text-muted-foreground">
+                    Professional WYSIWYG resume builder with 5 templates, live A4 preview, drag-and-drop sections, color picker, font customization, and photo support. Export-ready for PDF.
+                  </p>
+                </div>
+
                 {/* Games Hub */}
                 <div className="border border-border p-6 hover:border-primary transition-all duration-300 group">
                   <div className="mb-4 text-primary">
@@ -298,7 +311,7 @@ export default function HomePage() {
                   </div>
                   <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">Games Hub</h3>
                   <p className="text-muted-foreground">
-                    Take a break with games and challenges. From Sudoku and Tetris to typing tests and brain teasers.
+                    Take a break with puzzle games, arcade classics, and brain training. Sudoku, Tetris, Snake, typing tests, and more to refresh your mind.
                   </p>
                 </div>
 
@@ -374,25 +387,63 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Projects Preview Section */}
-        <section id="projects" className="border-b border-border">
+        {/* Founder Section */}
+        <section id="founder" className="border-b border-border">
           <div className="container mx-auto px-4 py-24">
-            <div className="mx-auto max-w-6xl">
-              <h2 className="text-3xl md:text-5xl font-bold mb-12 text-balance">Featured Projects</h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[
-                  { name: "lab68dev-platform", desc: "Next.js web application with AI integration", status: "Active", github: "https://github.com/lab68dev/lab68dev-platform" },
-                  { name: "lab68dev-AutoPR", desc: "Automate pull request reviews with an AI that understands context, best practices, and your org’s style guide", status: "Soon" },
-                  { name: "lab68dev-internal-hub", desc: "Internal Hub", status: "Soon" },
-                ].map((project) => (
-                  <div key={project.name} className="border border-border p-6 hover:border-primary transition-colors">
-                    <div className="flex items-start justify-between mb-4">
-                      <h3 className="text-xl font-bold">{project.name}</h3>
-                      <span className="text-xs border border-primary text-primary px-2 py-1">{project.status}</span>
+            <div className="mx-auto max-w-4xl">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-5xl font-bold mb-4">Meet the Founder</h2>
+                <p className="text-lg text-muted-foreground">
+                  Dedicated to building powerful tools for developers and teams
+                </p>
+              </div>
+              
+              <div className="border border-border p-8 md:p-12 hover:border-primary transition-all duration-300">
+                <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
+                  <div className="flex-shrink-0">
+                    <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-primary/20 bg-white">
+                      <Image
+                        src="/images/logos/Duong Phu Dong.png"
+                        alt="F4P1E - Duong Phu Dong"
+                        width={128}
+                        height={128}
+                        className="object-cover w-full h-full"
+                      />
                     </div>
-                    <p className="text-sm text-muted-foreground">{project.desc}</p>
                   </div>
-                ))}
+                  
+                  <div className="flex-1 text-center md:text-left">
+                    <h3 className="text-2xl md:text-3xl font-bold mb-2">F4P1E (Duong Phu Dong)</h3>
+                    <p className="text-primary font-medium mb-4">Founder & Lead Developer</p>
+                    <p className="text-muted-foreground mb-6 leading-relaxed">
+                      Creator of Lab68 Dev Platform - a comprehensive collaborative workspace designed to empower developers and teams. 
+                      Passionate about building tools that enhance productivity, streamline workflows, and foster innovation.
+                    </p>
+                    
+                    <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                      <Button asChild variant="default">
+                        <Link href="https://github.com/F4P1E" target="_blank" rel="noopener noreferrer">
+                          <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
+                          </svg>
+                          GitHub Profile
+                        </Link>
+                      </Button>
+                      
+                      <Button asChild variant="outline">
+                        <Link href="https://github.com/lab68dev/lab68dev-platform" target="_blank" rel="noopener noreferrer">
+                          View Project Repository
+                        </Link>
+                      </Button>
+                    </div>
+                    
+                    <div className="mt-6 pt-6 border-t border-border">
+                      <p className="text-sm text-muted-foreground">
+                        <strong className="text-foreground">Tech Stack Expertise:</strong> Next.js, React, TypeScript, Node.js, PostgreSQL, Supabase, Tailwind CSS
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -403,3 +454,4 @@ export default function HomePage() {
     </div>
   )
 }
+
